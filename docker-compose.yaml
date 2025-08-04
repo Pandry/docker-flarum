@@ -1,0 +1,32 @@
+services:
+  flarum:
+    build: . 
+    image: flarum
+    ports:
+      - 8888:8888
+    volumes:
+      - ./data/flarum/extentions:/flarum/app/extensions
+      - ./data/flarum/assets:/flarum/app/public/assets
+      - ./data/flarum/logs:/flarum/app/storage/logs
+    environment:
+      - FORUM_URL=localhost:8888
+      - DB_HOST=db
+      - DB_PASS=flarum
+      - DB_USER=flarum
+      - FLARUM_ADMIN_USER=admin
+      - FLARUM_ADMIN_PASS=password
+      - FLARUM_ADMIN_MAIL=admin@admin.com
+
+
+  db:
+    image: mariadb
+    restart: always
+    ports:
+      - 3306:3306
+    environment:
+      MARIADB_ROOT_PASSWORD: example
+      MYSQL_USER: flarum
+      MYSQL_PASSWORD: flarum
+      MYSQL_DATABASE: flarum
+    volumes:
+      - ./data/db:/var/lib/mysql:Z
