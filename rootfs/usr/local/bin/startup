@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-
+set -x
 # Required env variables
 if [ -z "${DB_PASS}" ]; then
   echo "[ERROR] Mariadb database password must be set !"
@@ -118,11 +118,11 @@ else
          -e "s|<FLARUM_TITLE>|${FLARUM_TITLE}|g" /flarum/app/config.yml
 
   # Install flarum
-  su-exec "${UID}:${GID}" php /flarum/app/flarum install --file=/flarum/app/config.yml \
-  && touch /flarum/app/public/assets/._flarum-installed.lock
+  touch /flarum/app/public/assets/._flarum-installed.lock
 
   echo "[INFO] End of flarum installation"
 fi
 
 echo "[INFO] End of startup script. Forum is starting."
-exec su-exec "${UID}:${GID}" /bin/s6-svscan /etc/s6.d
+exec su-exec "${UID}:${GID}" /usr/bin/s6-svscan /etc/s6.d
+

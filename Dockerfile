@@ -1,9 +1,8 @@
-FROM alpine:3.16
+FROM alpine
 
-LABEL description="Simple forum software for building great communities" \
-      maintainer="Magicalex <magicalex@mondedie.fr>"
+LABEL description="Simple forum software for building great communities"
 
-ARG VERSION=v1.3.0
+ARG VERSION=v1.8.0
 
 ENV GID=991 \
     UID=991 \
@@ -26,43 +25,46 @@ RUN apk add --no-progress --no-cache \
     icu-data-full \
     libcap \
     nginx \
-    php8 \
-    php8-ctype \
-    php8-curl \
-    php8-dom \
-    php8-exif \
-    php8-fileinfo \
-    php8-fpm \
-    php8-gd \
-    php8-gmp \
-    php8-iconv \
-    php8-intl \
-    php8-mbstring \
-    php8-mysqlnd \
-    php8-opcache \
-    php8-pecl-apcu \
-    php8-openssl \
-    php8-pdo \
-    php8-pdo_mysql \
-    php8-phar \
-    php8-session \
-    php8-tokenizer \
-    php8-xmlwriter \
-    php8-zip \
-    php8-zlib \
+    php84 \
+    php84-ctype \
+    php84-curl \
+    php84-dom \
+    php84-exif \
+    php84-fileinfo \
+    php84-fpm \
+    php84-gd \
+    php84-gmp \
+    php84-iconv \
+    php84-intl \
+    php84-mbstring \
+    php84-mysqlnd \
+    php84-opcache \
+    php84-pecl-apcu \
+    php84-openssl \
+    php84-pdo \
+    php84-pdo_mysql \
+    php84-phar \
+    php84-session \
+    php84-tokenizer \
+    php84-xmlwriter \
+    php84-zip \
+    php84-zlib \
     su-exec \
     s6 \
+  && ln -s /usr/bin/php84 /usr/bin/php \
   && cd /tmp \
-  && curl --progress-bar http://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
-  && sed -i 's/memory_limit = .*/memory_limit = ${PHP_MEMORY_LIMIT}/' /etc/php8/php.ini \
+  && curl --progress-bar http://getcomposer.org/installer | php84 -- --install-dir=/usr/local/bin --filename=composer \
+  && sed -i 's/memory_limit = .*/memory_limit = ${PHP_MEMORY_LIMIT}/' /etc/php84/php.ini \
   && chmod +x /usr/local/bin/composer \
   && mkdir -p /run/php /flarum/app \
-  && COMPOSER_CACHE_DIR="/tmp" composer create-project flarum/flarum:$VERSION /flarum/app \
+  && COMPOSER_CACHE_DIR="/tmp" composer create-project flarum/flarum:^$VERSION /flarum/app \
+  && COMPOSER_CACHE_DIR="/tmp" composer require flarum/extension-manager:"*" flarum/flarum:^$VERSION \
   && composer clear-cache \
   && rm -rf /flarum/.composer /tmp/* \
   && setcap CAP_NET_BIND_SERVICE=+eip /usr/sbin/nginx
 
 COPY rootfs /
-RUN chmod +x /usr/local/bin/* /etc/s6.d/*/run /etc/s6.d/.s6-svscan/*
-VOLUME /etc/nginx/flarum /flarum/app/extensions /flarum/app/public/assets /flarum/app/storage/logs
+RUN chmod -R +xr /usr/local/bin/* /etc/s6.d/* /etc/s6.d/.s6-svscan/*
+VOLUME /flarum/app/extensions /flarum/app/public/assets /flarum/app/storage/logs
+EXPOSE 8888
 CMD ["/usr/local/bin/startup"]
