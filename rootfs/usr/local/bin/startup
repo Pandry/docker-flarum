@@ -123,6 +123,11 @@ else
   echo "[INFO] End of flarum installation"
 fi
 
-echo "[INFO] End of startup script. Forum is starting."
+echo "[INFO] End of startup script."
+echo "[INFO] Start of extensions script."
+for ext in "$FLARUM_EXTENSION"; do
+  composer require $ext:"*" -d /flarum/app
+done
+echo "[INFO] End of extensions script. Forum is starting."
 exec su-exec "${UID}:${GID}" /usr/bin/s6-svscan /etc/s6.d
 

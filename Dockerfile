@@ -58,7 +58,7 @@ RUN apk add --no-progress --no-cache \
   && chmod +x /usr/local/bin/composer \
   && mkdir -p /run/php /flarum/app \
   && COMPOSER_CACHE_DIR="/tmp" composer create-project flarum/flarum:^$VERSION /flarum/app \
-  && COMPOSER_CACHE_DIR="/tmp" composer require flarum/extension-manager:"*" flarum/flarum:^$VERSION \
+  && COMPOSER_CACHE_DIR="/tmp" composer require flarum/extension-manager:"*" -d /flarum/app \
   && composer clear-cache \
   && rm -rf /flarum/.composer /tmp/* \
   && setcap CAP_NET_BIND_SERVICE=+eip /usr/sbin/nginx

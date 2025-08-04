@@ -16,6 +16,11 @@ services:
       - FLARUM_ADMIN_USER=admin
       - FLARUM_ADMIN_PASS=password
       - FLARUM_ADMIN_MAIL=admin@admin.com
+      - FLARUM_EXTENSION=syntaxoutlaw/threadify fof/best-answer
+      - LOG_TO_STDOUT=true
+    depends_on:
+      - db
+
 
 
   db:
